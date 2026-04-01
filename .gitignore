@@ -48,3 +48,5 @@ wp-config.php
 #/wp-content/themeswp-config.php
 .env
 wp-content/uploads/
+
+.DS_Store

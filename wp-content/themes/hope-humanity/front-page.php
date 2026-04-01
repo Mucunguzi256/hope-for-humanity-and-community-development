@@ -16,8 +16,13 @@
 <!-- IMPACT STATS -->
 <section class="stats">
     <div class="stats-inner">
+        <?php
+        $campaign_count = post_type_exists('give_forms')
+            ? (int) wp_count_posts('give_forms')->publish
+            : 0;
+        ?>
         <div class="stat"><h2>5,000+</h2><p>Lives Impacted</p></div>
-        <div class="stat"><h2>3</h2><p>Active Causes</p></div>
+        <div class="stat"><h2><?php echo esc_html($campaign_count); ?></h2><p>Active Causes</p></div>
         <div class="stat"><h2>12+</h2><p>Communities Served</p></div>
         <div class="stat"><h2>98%</h2><p>Funds to Programs</p></div>
     </div>
@@ -31,24 +36,44 @@
             <p>Every donation goes directly to those who need it most.</p>
         </div>
         <div class="causes-grid">
-            <div class="cause-card">
-                <div class="cause-icon">💧</div>
-                <h3>Clean Water</h3>
-                <p>Providing access to safe, clean drinking water to communities suffering from water scarcity.</p>
-                <a href="<?php echo home_url('/our-causes'); ?>" class="cause-link">Donate →</a>
-            </div>
-            <div class="cause-card">
-                <div class="cause-icon">🍽️</div>
-                <h3>Food Aid</h3>
-                <p>Delivering nutritious meals and food packages to families facing hunger and food insecurity.</p>
-                <a href="<?php echo home_url('/our-causes'); ?>" class="cause-link">Donate →</a>
-            </div>
-            <div class="cause-card">
-                <div class="cause-icon">🤝</div>
-                <h3>Orphan Support</h3>
-                <p>Supporting orphaned children with shelter, education, and the care they deserve.</p>
-                <a href="<?php echo home_url('/our-causes'); ?>" class="cause-link">Donate →</a>
-            </div>
+            <?php
+            $campaigns_query = post_type_exists('give_forms') ? new WP_Query([
+                'post_type'      => 'give_forms',
+                'post_status'    => 'publish',
+                'posts_per_page' => 3,
+                'orderby'        => 'date',
+                'order'          => 'DESC',
+            ]) : null;
+            ?>
+
+            <?php if ($campaigns_query && $campaigns_query->have_posts()) : ?>
+                <?php while ($campaigns_query->have_posts()) : $campaigns_query->the_post(); ?>
+                    <article class="cause-card">
+                        <?php if (has_post_thumbnail()) : ?>
+                            <div class="cause-thumb-wrap"><?php the_post_thumbnail('medium', ['class' => 'cause-thumb', 'loading' => 'lazy']); ?></div>
+                        <?php else : ?>
+                            <div class="cause-icon" aria-hidden="true">❤</div>
+                        <?php endif; ?>
+                        <h3><?php the_title(); ?></h3>
+                        <p><?php echo esc_html(wp_trim_words(get_the_excerpt() ?: get_the_content(), 20, '...')); ?></p>
+                        <a href="<?php the_permalink(); ?>" class="cause-link">Donate to This Cause →</a>
+                        <small class="cause-id">Form ID: <?php echo esc_html(get_the_ID()); ?></small>
+                    </article>
+                <?php endwhile; ?>
+                <?php wp_reset_postdata(); ?>
+            <?php else : ?>
+                <article class="cause-card">
+                    <div class="cause-icon" aria-hidden="true">+</div>
+                    <h3>Create Your First Campaign</h3>
+                    <p>Add GiveWP campaign forms from your dashboard and they will automatically appear here.</p>
+                    <?php
+                    $new_campaign_url = function_exists('hope_humanity_get_givewp_admin_url')
+                        ? hope_humanity_get_givewp_admin_url('new_campaign')
+                        : admin_url('edit.php?post_type=give_forms&page=give-campaigns&new=campaign');
+                    ?>
+                    <a href="<?php echo esc_url($new_campaign_url); ?>" class="cause-link">Add Campaign Form →</a>
+                </article>
+            <?php endif; ?>
         </div>
     </div>
 </section>

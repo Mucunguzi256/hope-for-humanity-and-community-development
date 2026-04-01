@@ -68,6 +68,15 @@ img {
     white-space: nowrap;
 }
 
+.site-logo--image .custom-logo-link {
+    display: inline-flex;
+    align-items: center;
+}
+
+.site-logo--image .custom-logo {
+    max-height: 56px;
+    width: auto;
+}
 .site-tagline {
     font-size: 0.65rem;
     color: #90cdf4;
@@ -379,6 +388,17 @@ img {
     gap: 2rem;
 }
 
+@media (max-width: 1000px) {
+    .causes-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .causes-grid {
+        grid-template-columns: 1fr;
+    }
+}
 /* ===== CAUSE CARDS WITH HOVER ===== */
 .cause-card {
     background: white;
@@ -431,6 +451,9 @@ img {
     transform: scale(1.2) rotate(5deg) !important;
 }
 
+.cause-card:hover .cause-id {
+    color: #90cdf4 !important;
+}
 .cause-icon {
     font-size: 3rem;
     margin-bottom: 1.2rem;
@@ -438,6 +461,17 @@ img {
     transition: transform 0.4s ease;
 }
 
+.cause-thumb-wrap {
+    margin-bottom: 1.2rem;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.cause-thumb {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+}
 .cause-card h3 {
     font-size: 1.4rem;
     font-weight: 700;
@@ -462,6 +496,13 @@ img {
     display: inline-block;
 }
 
+.cause-id {
+    display: block;
+    margin-top: 0.8rem;
+    color: #94a3b8;
+    font-size: 0.75rem;
+    letter-spacing: 0.2px;
+}
 /* ===== CTA ===== */
 .cta {
     background: linear-gradient(135deg, #0f3460, #16537e);
@@ -1680,4 +1721,97 @@ html, body {
     .logo-showcase-grid { grid-template-columns: 1fr; }
     .usage-grid { grid-template-columns: 1fr; }
     .color-palette { gap: 1rem; }
+}
+
+/* ===== GIVEWP FORM UX ===== */
+.givewp-layout,
+.givewp-donation-form,
+form[id^="give-form"] {
+    max-width: 760px;
+}
+
+.givewp-layout .givewp-form-title,
+.givewp-layout .givewp-donation-form__heading,
+form[id^="give-form"] .give-form-title {
+    color: #0f3460;
+    font-weight: 800;
+}
+
+.givewp-layout input,
+.givewp-layout select,
+.givewp-layout textarea,
+form[id^="give-form"] input,
+form[id^="give-form"] select,
+form[id^="give-form"] textarea {
+    border-radius: 10px;
+}
+
+.givewp-layout button[type="submit"],
+form[id^="give-form"] .give-submit,
+form[id^="give-form"] [id^="give-purchase-button"] {
+    min-height: 46px;
+    font-weight: 700;
+}
+
+@media (max-width: 768px) {
+
+    .givewp-layout,
+    .givewp-donation-form,
+    form[id^="give-form"] {
+        width: 100%;
+    }
+
+    .givewp-layout .givewp-fields,
+    .givewp-layout .givewp-donation-form__fields,
+    form[id^="give-form"] .give-form-row {
+        gap: 0.85rem;
+    }
+
+    .givewp-layout .givewp-donation-levels,
+    form[id^="give-form"] .give-donation-levels-wrap {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.6rem;
+    }
+
+    .givewp-layout .givewp-donation-levels button,
+    form[id^="give-form"] .give-donation-level-btn {
+        width: 100%;
+        min-height: 44px;
+    }
+
+    .givewp-layout button[type="submit"],
+    form[id^="give-form"] .give-submit,
+    form[id^="give-form"] [id^="give-purchase-button"] {
+        width: 100%;
+    }
+}
+
+@media (max-width: 520px) {
+
+    .givewp-layout .givewp-donation-levels,
+    form[id^="give-form"] .give-donation-levels-wrap {
+        grid-template-columns: 1fr;
+    }
+}
+
+.hope-physical-donation-note {
+    border: 1px solid #f4b942;
+    background: #fff8e1;
+    color: #5c4300;
+    border-radius: 10px;
+    padding: 0.9rem 1rem;
+    margin: 0 0 1rem 0;
+}
+
+.hope-physical-donation-note strong {
+    display: block;
+    font-size: 0.95rem;
+    margin-bottom: 0.3rem;
+}
+
+.hope-physical-donation-note p {
+    margin: 0;
+    font-size: 0.92rem;
+    line-height: 1.45;
 }

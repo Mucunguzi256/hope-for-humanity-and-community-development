@@ -3,17 +3,23 @@
 <head>
     <meta charset="<?php bloginfo('charset'); ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title><?php wp_title('|', true, 'right'); ?><?php bloginfo('name'); ?></title>
     <?php wp_head(); ?>
 </head>
 <body <?php body_class(); ?>>
+<?php wp_body_open(); ?>
 
 <header class="site-header">
     <div class="header-inner">
         <div class="site-branding">
-            <a href="<?php echo home_url(); ?>" class="site-logo">
-                🌍 <?php bloginfo('name'); ?>
-            </a>
+            <?php if (has_custom_logo()) : ?>
+                <div class="site-logo site-logo--image">
+                    <?php the_custom_logo(); ?>
+                </div>
+            <?php else : ?>
+                <a href="<?php echo home_url(); ?>" class="site-logo">
+                    <?php bloginfo('name'); ?>
+                </a>
+            <?php endif; ?>
             <p class="site-tagline"><?php bloginfo('description'); ?></p>
         </div>
 
@@ -25,7 +31,8 @@
             ]); ?>
         </nav>
 
-        <a href="<?php echo get_permalink(get_page_by_path('donate')); ?>" class="donate-btn">
+        <?php $donate_page = get_page_by_path('donate'); ?>
+        <a href="<?php echo $donate_page ? get_permalink($donate_page) : home_url('/donate'); ?>" class="donate-btn">
             Donate Now
         </a>
     </div>
