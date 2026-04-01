@@ -50,5 +50,6 @@ wp-config.php
 wp-content/uploads/
 
 .DS_Store
-
+.env.production.example
 docker/
+docker-compose.prod.yml
