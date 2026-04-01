@@ -17,7 +17,7 @@ services:
     image: wordpress:php8.2-apache
     container_name: hope_wordpress
     expose:
-      - '8080:80'
+      - '80'
     restart: always
     depends_on:
       - db
