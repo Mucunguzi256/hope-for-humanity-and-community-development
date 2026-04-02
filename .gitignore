@@ -45,8 +45,10 @@ wp-config.php
 #
 # Note: If you wish to whitelist themes,
 # uncomment the next line
-#/wp-content/themeswp-config.php
+#/wp-content/themes
 .env
+.env.production
+.env.production.local
 wp-content/uploads/
 
 .DS_Store
