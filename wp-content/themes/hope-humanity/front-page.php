@@ -7,7 +7,7 @@
         <h1>Bringing <span class="highlight">Hope</span> to Humanity</h1>
         <p>We work tirelessly to provide clean water, food aid, and support to orphans across communities in need.</p>
         <div class="hero-buttons">
-            <a href="<?php echo home_url('/donate'); ?>" class="btn-primary">Donate Now</a>
+            <a href="<?php echo home_url('/our-causes/'); ?>" class="btn-primary">Donate Now</a>
             <a href="<?php echo home_url('/our-causes'); ?>" class="btn-secondary">Our Causes</a>
         </div>
     </div>
@@ -58,7 +58,6 @@
                         <p><?php echo esc_html(wp_trim_words(get_the_excerpt() ?: get_the_content(), 20, '...')); ?></p>
                         <?php $cause_url = function_exists('hope_humanity_get_cause_url') ? hope_humanity_get_cause_url(get_the_ID()) : get_permalink(); ?>
                         <a href="<?php echo esc_url($cause_url); ?>" class="cause-link">Donate to This Cause →</a>
-                        <small class="cause-id">Form ID: <?php echo esc_html(get_the_ID()); ?></small>
                     </article>
                 <?php endwhile; ?>
                 <?php wp_reset_postdata(); ?>
@@ -193,7 +192,7 @@
     <div class="cta-inner">
         <h2>Ready to Make a Difference?</h2>
         <p>Your donation, no matter the size, changes lives forever.</p>
-        <a href="<?php echo home_url('/donate'); ?>" class="btn-primary">Donate Now</a>
+        <a href="<?php echo home_url('/our-causes/'); ?>" class="btn-primary">Donate Now</a>
     </div>
 </section>
 

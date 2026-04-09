@@ -38,8 +38,7 @@
             <span></span>
         </button>
 
-        <?php $donate_page = get_page_by_path('donate'); ?>
-        <a href="<?php echo $donate_page ? get_permalink($donate_page) : home_url('/donate'); ?>" class="donate-btn">
+        <a href="<?php echo home_url('/our-causes/'); ?>" class="donate-btn">
             Donate Now
         </a>
     </div>
@@ -54,8 +53,7 @@
             'menu_class'     => 'nav-menu',
             'fallback_cb'    => false,
         ]); ?>
-        <?php $donate_page = get_page_by_path('donate'); ?>
-        <a href="<?php echo $donate_page ? get_permalink($donate_page) : home_url('/donate'); ?>" class="donate-btn">
+        <a href="<?php echo home_url('/our-causes/'); ?>" class="donate-btn">
             Donate Now
         </a>
     </div>

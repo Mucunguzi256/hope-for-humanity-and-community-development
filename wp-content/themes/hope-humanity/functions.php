@@ -41,6 +41,18 @@ function hope_humanity_scripts() {
 }
 add_action('wp_enqueue_scripts', 'hope_humanity_scripts');
 
+function hope_humanity_redirect_donate_to_causes() {
+    if (is_admin()) {
+        return;
+    }
+
+    if (is_page('donate')) {
+        wp_safe_redirect(home_url('/our-causes/'), 301);
+        exit;
+    }
+}
+add_action('template_redirect', 'hope_humanity_redirect_donate_to_causes');
+
 function hope_humanity_add_favicon() {
     $logo_url = esc_url(get_template_directory_uri() . '/images/hfhcd-logo.png');
     echo '<link rel="icon" type="image/png" href="' . $logo_url . '" />' . PHP_EOL;

@@ -17,7 +17,7 @@
             <ul>
                 <li><a href="<?php echo home_url('/about-us'); ?>">About Us</a></li>
                 <li><a href="<?php echo home_url('/our-causes'); ?>">Our Causes</a></li>
-                <li><a href="<?php echo home_url('/donate'); ?>">Donate</a></li>
+                <li><a href="<?php echo home_url('/our-causes/'); ?>">Donate</a></li>
                 <li><a href="<?php echo home_url('/contact-us'); ?>">Contact Us</a></li>
                 <li><a href="<?php echo home_url('/news-updates'); ?>">News</a></li>
                 <li><a href="<?php echo home_url('/branding'); ?>">Branding</a></li>
