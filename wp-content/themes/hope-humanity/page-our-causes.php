@@ -32,7 +32,8 @@
 
                         <h3><?php the_title(); ?></h3>
                         <p><?php echo esc_html(wp_trim_words(get_the_excerpt() ?: get_the_content(), 26, '...')); ?></p>
-                        <a href="<?php the_permalink(); ?>" class="cause-link">Donate to This Cause →</a>
+                        <?php $cause_url = function_exists('hope_humanity_get_cause_url') ? hope_humanity_get_cause_url(get_the_ID()) : get_permalink(); ?>
+                        <a href="<?php echo esc_url($cause_url); ?>" class="cause-link">Donate to This Cause →</a>
                         <small class="cause-id">Form ID: <?php echo esc_html(get_the_ID()); ?></small>
                     </article>
                 <?php endwhile; ?>
