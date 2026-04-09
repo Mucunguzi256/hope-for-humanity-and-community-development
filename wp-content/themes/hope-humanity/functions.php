@@ -338,17 +338,18 @@ function hope_humanity_render_campaign_id_column($column, $post_id) {
 add_action('manage_give_forms_posts_custom_column', 'hope_humanity_render_campaign_id_column', 10, 2);
 
 function hope_humanity_dynamic_causes_menu($items, $menu) {
-    if (!post_type_exists('give_forms') || $menu->name !== 'Header Menu') {
+    if (!post_type_exists('give_forms')) {
         return $items;
     }
 
     $our_causes_item = null;
-    $our_causes_index = -1;
 
-    foreach ($items as $index => $item) {
-        if (isset($item->title) && strtolower($item->title) === 'our causes' && $item->menu_item_parent == 0) {
+    foreach ($items as $item) {
+        $item_title = isset($item->title) ? strtolower(trim(wp_strip_all_tags($item->title))) : '';
+        $item_path  = isset($item->url) ? untrailingslashit((string) wp_parse_url($item->url, PHP_URL_PATH)) : '';
+
+        if ((int) $item->menu_item_parent === 0 && ('our causes' === $item_title || '/our-causes' === $item_path)) {
             $our_causes_item = $item;
-            $our_causes_index = $index;
             break;
         }
     }
@@ -356,6 +357,11 @@ function hope_humanity_dynamic_causes_menu($items, $menu) {
     if (!$our_causes_item) {
         return $items;
     }
+
+    // Remove existing static children under "Our Causes" to avoid stale links.
+    $new_items = array_values(array_filter($items, function ($item) use ($our_causes_item) {
+        return (int) $item->menu_item_parent !== (int) $our_causes_item->ID;
+    }));
 
     $causes_query = new WP_Query([
         'post_type'      => 'give_forms',
@@ -365,33 +371,31 @@ function hope_humanity_dynamic_causes_menu($items, $menu) {
         'order'          => 'DESC',
     ]);
 
-    $new_items = $items;
-
     if ($causes_query->have_posts()) {
         while ($causes_query->have_posts()) {
             $causes_query->the_post();
             $cause_id = get_the_ID();
 
-            $cause_item = (object)[
-                'ID'              => 'dynamic-cause-' . $cause_id,
-                'post_name'       => 'dynamic-cause-' . $cause_id,
-                'post_parent'     => $our_causes_item->ID,
-                'menu_item_parent'=> $our_causes_item->ID,
-                'object_id'       => $cause_id,
-                'object'          => 'post',
-                'type'            => 'post_type',
-                'type_label'      => 'GiveWP Campaign',
-                'title'           => get_the_title(),
-                'url'             => get_permalink(),
-                'description'     => '',
-                'attr_title'      => '',
-                'target'          => '',
-                'classes'         => ['menu-item', 'menu-item-type-post_type', 'menu-item-object-give_forms'],
-                'xfn'             => '',
-                'current'         => false,
+            $cause_item = (object) [
+                'ID'                    => 'dynamic-cause-' . $cause_id,
+                'post_name'             => 'dynamic-cause-' . $cause_id,
+                'post_parent'           => $our_causes_item->ID,
+                'menu_item_parent'      => $our_causes_item->ID,
+                'object_id'             => $cause_id,
+                'object'                => 'give_forms',
+                'type'                  => 'post_type',
+                'type_label'            => 'GiveWP Campaign',
+                'title'                 => get_the_title(),
+                'url'                   => get_permalink(),
+                'description'           => '',
+                'attr_title'            => '',
+                'target'                => '',
+                'classes'               => ['menu-item', 'menu-item-type-post_type', 'menu-item-object-give_forms'],
+                'xfn'                   => '',
+                'current'               => false,
                 'current_item_ancestor' => false,
-                'current_item_parent' => false,
-                'level'           => 1,
+                'current_item_parent'   => false,
+                'level'                 => 1,
             ];
 
             $new_items[] = $cause_item;
