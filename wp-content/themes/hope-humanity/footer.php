@@ -1,7 +1,15 @@
 <footer class="site-footer">
     <div class="footer-inner">
         <div class="footer-col">
-            <h3>🌍 Hope for Humanity</h3>
+            <?php if (has_custom_logo()) : ?>
+                <div class="footer-logo">
+                    <?php the_custom_logo(); ?>
+                </div>
+            <?php else : ?>
+                <a href="<?php echo home_url(); ?>" class="footer-logo">
+                    <img src="<?php echo esc_url(get_template_directory_uri() . '/images/hfhcd-logo.png'); ?>" alt="<?php bloginfo('name'); ?>" width="64" height="64">
+                </a>
+            <?php endif; ?>
             <p>Bringing hope and change to communities through clean water, food aid, and orphan support.</p>
         </div>
         <div class="footer-col">
