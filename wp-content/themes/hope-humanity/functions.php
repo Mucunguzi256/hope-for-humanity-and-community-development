@@ -41,6 +41,18 @@ function hope_humanity_scripts() {
 }
 add_action('wp_enqueue_scripts', 'hope_humanity_scripts');
 
+function hope_humanity_redirect_donate_to_causes() {
+    if (is_admin()) {
+        return;
+    }
+
+    if (is_page('donate')) {
+        wp_safe_redirect(home_url('/our-causes/'), 301);
+        exit;
+    }
+}
+add_action('template_redirect', 'hope_humanity_redirect_donate_to_causes');
+
 function hope_humanity_add_favicon() {
     $logo_url = esc_url(get_template_directory_uri() . '/images/hfhcd-logo.png');
     echo '<link rel="icon" type="image/png" href="' . $logo_url . '" />' . PHP_EOL;
@@ -91,6 +103,57 @@ function hope_humanity_get_givewp_admin_url($target = 'campaigns') {
         default:
             return admin_url('edit.php?post_type=give_forms&page=give-campaigns');
     }
+}
+
+function hope_humanity_get_campaign_page_url_from_form($form_id) {
+    $page_id = hope_humanity_get_campaign_page_id_from_form($form_id);
+
+    if ($page_id <= 0) {
+        return '';
+    }
+
+    $url = get_permalink($page_id);
+
+    return $url ? $url : '';
+}
+
+function hope_humanity_get_campaign_page_id_from_form($form_id) {
+    global $wpdb;
+
+    $form_id = (int) $form_id;
+
+    if ($form_id <= 0) {
+        return 0;
+    }
+
+    $campaign_id = (int) $wpdb->get_var(
+        $wpdb->prepare(
+            "SELECT campaign_id FROM {$wpdb->prefix}give_campaign_forms WHERE form_id = %d LIMIT 1",
+            $form_id
+        )
+    );
+
+    if ($campaign_id <= 0) {
+        return 0;
+    }
+
+    return (int) $wpdb->get_var(
+        $wpdb->prepare(
+            "SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value = %s ORDER BY post_id DESC LIMIT 1",
+            'give_campaign_id',
+            (string) $campaign_id
+        )
+    );
+}
+
+function hope_humanity_get_cause_url($form_id) {
+    $campaign_page_url = hope_humanity_get_campaign_page_url_from_form($form_id);
+
+    if ($campaign_page_url) {
+        return $campaign_page_url;
+    }
+
+    return get_permalink((int) $form_id);
 }
 
 function hope_humanity_count_past_due_actions() {
@@ -336,6 +399,76 @@ function hope_humanity_render_campaign_id_column($column, $post_id) {
     echo '<code>#' . esc_html((string) $post_id) . '</code>';
 }
 add_action('manage_give_forms_posts_custom_column', 'hope_humanity_render_campaign_id_column', 10, 2);
+
+function hope_humanity_dynamic_causes_menu($items, $menu) {
+    if (!post_type_exists('give_forms')) {
+        return $items;
+    }
+
+    $our_causes_item = null;
+
+    foreach ($items as $item) {
+        $item_title = isset($item->title) ? strtolower(trim(wp_strip_all_tags($item->title))) : '';
+        $item_path  = isset($item->url) ? untrailingslashit((string) wp_parse_url($item->url, PHP_URL_PATH)) : '';
+
+        if ((int) $item->menu_item_parent === 0 && ('our causes' === $item_title || '/our-causes' === $item_path)) {
+            $our_causes_item = $item;
+            break;
+        }
+    }
+
+    if (!$our_causes_item) {
+        return $items;
+    }
+
+    // Remove existing static children under "Our Causes" to avoid stale links.
+    $new_items = array_values(array_filter($items, function ($item) use ($our_causes_item) {
+        return (int) $item->menu_item_parent !== (int) $our_causes_item->ID;
+    }));
+
+    $causes_query = new WP_Query([
+        'post_type'      => 'give_forms',
+        'post_status'    => 'publish',
+        'posts_per_page' => -1,
+        'orderby'        => 'date',
+        'order'          => 'DESC',
+    ]);
+
+    if ($causes_query->have_posts()) {
+        while ($causes_query->have_posts()) {
+            $causes_query->the_post();
+            $cause_id = get_the_ID();
+
+            $cause_item = (object) [
+                'ID'                    => 'dynamic-cause-' . $cause_id,
+                'post_name'             => 'dynamic-cause-' . $cause_id,
+                'post_parent'           => $our_causes_item->ID,
+                'menu_item_parent'      => $our_causes_item->ID,
+                'object_id'             => $cause_id,
+                'object'                => 'give_forms',
+                'type'                  => 'post_type',
+                'type_label'            => 'GiveWP Campaign',
+                'title'                 => get_the_title(),
+                'url'                   => hope_humanity_get_cause_url($cause_id),
+                'description'           => '',
+                'attr_title'            => '',
+                'target'                => '',
+                'classes'               => ['menu-item', 'menu-item-type-post_type', 'menu-item-object-give_forms'],
+                'xfn'                   => '',
+                'current'               => false,
+                'current_item_ancestor' => false,
+                'current_item_parent'   => false,
+                'level'                 => 1,
+            ];
+
+            $new_items[] = $cause_item;
+        }
+        wp_reset_postdata();
+    }
+
+    return $new_items;
+}
+add_filter('wp_nav_menu_objects', 'hope_humanity_dynamic_causes_menu', 10, 2);
 
 function hope_humanity_hide_welcome_panel() {
     $user_id = get_current_user_id();
