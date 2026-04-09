@@ -337,7 +337,7 @@ function hope_humanity_render_campaign_id_column($column, $post_id) {
 }
 add_action('manage_give_forms_posts_custom_column', 'hope_humanity_render_campaign_id_column', 10, 2);
 
-function hope_humanity_dynamic_causes_menu($items, $menu, $args) {
+function hope_humanity_dynamic_causes_menu($items, $menu) {
     if (!post_type_exists('give_forms') || $menu->name !== 'Header Menu') {
         return $items;
     }
@@ -401,7 +401,7 @@ function hope_humanity_dynamic_causes_menu($items, $menu, $args) {
 
     return $new_items;
 }
-add_filter('wp_nav_menu_objects', 'hope_humanity_dynamic_causes_menu', 10, 3);
+add_filter('wp_nav_menu_objects', 'hope_humanity_dynamic_causes_menu', 10, 2);
 
 function hope_humanity_hide_welcome_panel() {
     $user_id = get_current_user_id();
