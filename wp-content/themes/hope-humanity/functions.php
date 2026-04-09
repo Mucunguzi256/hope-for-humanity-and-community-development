@@ -106,12 +106,24 @@ function hope_humanity_get_givewp_admin_url($target = 'campaigns') {
 }
 
 function hope_humanity_get_campaign_page_url_from_form($form_id) {
+    $page_id = hope_humanity_get_campaign_page_id_from_form($form_id);
+
+    if ($page_id <= 0) {
+        return '';
+    }
+
+    $url = get_permalink($page_id);
+
+    return $url ? $url : '';
+}
+
+function hope_humanity_get_campaign_page_id_from_form($form_id) {
     global $wpdb;
 
     $form_id = (int) $form_id;
 
     if ($form_id <= 0) {
-        return '';
+        return 0;
     }
 
     $campaign_id = (int) $wpdb->get_var(
@@ -122,24 +134,16 @@ function hope_humanity_get_campaign_page_url_from_form($form_id) {
     );
 
     if ($campaign_id <= 0) {
-        return '';
+        return 0;
     }
 
-    $page_id = (int) $wpdb->get_var(
+    return (int) $wpdb->get_var(
         $wpdb->prepare(
             "SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value = %s ORDER BY post_id DESC LIMIT 1",
             'give_campaign_id',
             (string) $campaign_id
         )
     );
-
-    if ($page_id <= 0) {
-        return '';
-    }
-
-    $url = get_permalink($page_id);
-
-    return $url ? $url : '';
 }
 
 function hope_humanity_get_cause_url($form_id) {

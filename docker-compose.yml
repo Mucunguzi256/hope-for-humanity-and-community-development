@@ -77,4 +77,3 @@ networks:
 #       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
 #     networks:
 #       - hope_network
-
