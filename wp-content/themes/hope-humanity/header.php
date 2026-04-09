@@ -16,11 +16,11 @@
                     <?php the_custom_logo(); ?>
                 </div>
             <?php else : ?>
-                <a href="<?php echo home_url(); ?>" class="site-logo">
-                    <?php bloginfo('name'); ?>
+                <a href="<?php echo home_url(); ?>" class="site-logo site-logo--favicon">
+                    <img src="<?php echo esc_url(get_template_directory_uri() . '/images/hfhcd-logo.png'); ?>" alt="<?php bloginfo('name'); ?>" width="80" height="80">
+                    <span class="sr-only"><?php bloginfo('name'); ?></span>
                 </a>
             <?php endif; ?>
-            <p class="site-tagline"><?php bloginfo('description'); ?></p>
         </div>
 
         <nav class="main-nav">
@@ -31,6 +31,29 @@
             ]); ?>
         </nav>
 
+        <!-- Hamburger Menu Button -->
+        <button class="hamburger-menu" id="hamburger-menu" aria-label="Toggle menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+
+        <?php $donate_page = get_page_by_path('donate'); ?>
+        <a href="<?php echo $donate_page ? get_permalink($donate_page) : home_url('/donate'); ?>" class="donate-btn">
+            Donate Now
+        </a>
+    </div>
+
+    <!-- Mobile Menu Backdrop -->
+    <div class="mobile-menu-backdrop" id="mobile-menu-backdrop"></div>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobile-menu">
+        <?php wp_nav_menu([
+            'theme_location' => 'primary',
+            'menu_class'     => 'nav-menu',
+            'fallback_cb'    => false,
+        ]); ?>
         <?php $donate_page = get_page_by_path('donate'); ?>
         <a href="<?php echo $donate_page ? get_permalink($donate_page) : home_url('/donate'); ?>" class="donate-btn">
             Donate Now

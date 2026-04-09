@@ -28,6 +28,45 @@ function hope_humanity_styles() {
 }
 add_action('wp_enqueue_scripts', 'hope_humanity_styles');
 
+function hope_humanity_scripts() {
+    $theme = wp_get_theme();
+
+    wp_enqueue_script(
+        'hope-humanity-hamburger-menu',
+        get_template_directory_uri() . '/hamburger-menu.js',
+        [],
+        $theme->get('Version'),
+        true
+    );
+}
+add_action('wp_enqueue_scripts', 'hope_humanity_scripts');
+
+function hope_humanity_add_favicon() {
+    $logo_url = esc_url(get_template_directory_uri() . '/images/hfhcd-logo.png');
+    echo '<link rel="icon" type="image/png" href="' . $logo_url . '" />' . PHP_EOL;
+    echo '<link rel="apple-touch-icon" href="' . $logo_url . '" />' . PHP_EOL;
+}
+add_action('wp_head', 'hope_humanity_add_favicon');
+
+function hope_humanity_admin_logo() {
+    $logo_url = esc_url(get_template_directory_uri() . '/images/hfhcd-logo.png');
+    ?>
+    <style>
+        #wpadminbar .ab-item img {
+            width: auto !important;
+            height: 28px !important;
+        }
+        .wp-admin #wpadminbar #wp-admin-bar-wp-logo > .ab-item .ab-icon::before {
+            background-image: url('<?php echo $logo_url; ?>') !important;
+            background-size: contain !important;
+            background-repeat: no-repeat !important;
+            background-position: center !important;
+        }
+    </style>
+    <?php
+}
+add_action('admin_head', 'hope_humanity_admin_logo');
+
 function hope_humanity_get_givewp_admin_url($target = 'campaigns') {
     switch ($target) {
         case 'new_campaign':
@@ -312,3 +351,61 @@ function hope_humanity_admin_footer_text() {
 }
 add_filter('admin_footer_text', 'hope_humanity_admin_footer_text', 20);
 add_filter('update_footer', '__return_empty_string', 20);
+
+/**
+ * Set up favicon and site icon
+ * Outputs favicon links in the <head> and configures for wp-admin
+ */
+function hope_humanity_favicon_setup() {
+    $favicon_url = get_template_directory_uri() . '/images/favicon.svg';
+
+    // Add favicon links to head
+    echo '<link rel="icon" type="image/svg+xml" href="' . esc_url($favicon_url) . '">' . "\n";
+    echo '<link rel="shortcut icon" href="' . esc_url($favicon_url) . '">' . "\n";
+    echo '<link rel="apple-touch-icon" href="' . esc_url($favicon_url) . '">' . "\n";
+}
+add_action('wp_head', 'hope_humanity_favicon_setup', 5);
+add_action('admin_head', 'hope_humanity_favicon_setup', 5);
+add_action('login_head', 'hope_humanity_favicon_setup', 5);
+
+/**
+ * Custom CSS for wp-admin login page with logo
+ */
+function hope_humanity_login_logo_css() {
+    echo '<style>
+        .login h1 a {
+            background-image: url(' . esc_url(get_template_directory_uri() . '/images/favicon.svg') . ');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            width: 100%;
+            height: 120px;
+            display: block;
+        }
+        .login h1 a:hover,
+        .login h1 a:focus {
+            border-color: #2E7D32;
+        }
+    </style>' . "\n";
+}
+add_action('login_head', 'hope_humanity_login_logo_css', 10);
+
+/**
+ * Add logo to wp-admin header/menu bar
+ */
+function hope_humanity_admin_logo_css() {
+    echo '<style>
+        #adminmenu:before {
+            content: "";
+            display: block;
+            height: 60px;
+            background-image: url(' . esc_url(get_template_directory_uri() . '/images/favicon.svg') . ');
+            background-size: 40px 40px;
+            background-repeat: no-repeat;
+            background-position: center;
+            margin: 10px 0;
+            border-bottom: 1px solid #2E7D32;
+        }
+    </style>' . "\n";
+}
+add_action('admin_head', 'hope_humanity_admin_logo_css', 10);
